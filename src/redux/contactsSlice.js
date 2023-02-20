@@ -1,19 +1,26 @@
-import { createReducer } from '@reduxjs/toolkit';
-import { addContact, deleteContact, filterContacts } from './actions';
+import { createSlice } from '@reduxjs/toolkit';
+import { nanoid } from 'nanoid';
+// import { addContact, deleteContact, filterContacts } from './actions';
 
-const contactsInitialState = [];
-const filterInitialState = '';
-
-const contactsReducer = createReducer(contactsInitialState, {
-  [addContact]: (state, action) => {
-    return [...state, action.payload];
-  },
-  [deleteContact]: (state, action) => {
-    return state.filter(contact => contact.id !== action.payload);
+const contactsSlice = createSlice({
+  initialState: [],
+  name: 'contacts',
+  reducers: {
+    addContact(state, action) {
+      console.log('State:', state, 'Action:', action);
+      const contact = { ...action.payload, id: nanoid(6) };
+      state.push(contact);
+    },
+    deleteContact(state, action) {
+      const index = state.find(contact => contact.id === action.payload);
+      state.splice(index, 1);
+    },
   },
 });
-
-const filterReducer = createReducer(filterInitialState, {
-  [filterContacts]: (state, action) => state.filter(),
-});
-export { contactsReducer, filterReducer };
+const contactsReducer = contactsSlice.reducer;
+export { contactsReducer };
+export const { addContact, deleteContact } = contactsSlice.actions;
+// { id: 'id-1', name: 'Rosie Simpson', number: '098-396-56-58' },
+//  { id: 'id-2', name: 'Hermione Kline', number: '050-966-23-50' },
+//     { id: 'id-3', name: 'Eden Clements', number: '099-663-10-22' },
+//     { id: 'id-4', name: 'Annie Copeland', number: '099-423-66-19' },

@@ -5,10 +5,13 @@ import { CreateContactBtn } from 'components/Button/Button.styled';
 // Formik
 import { Formik } from 'formik';
 // PropTypes
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 // Yup
 import * as Yup from 'yup';
 import 'yup-phone';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact } from 'redux/contactsSlice';
+import { getContacts } from 'redux/selectors';
 
 // Validation Schema
 const schema = Yup.object().shape({
@@ -21,12 +24,18 @@ const schema = Yup.object().shape({
 });
 
 // Form
-const ContactsForm = ({ createContact }) => {
+const ContactsForm = () => {
+  const dispatch = useDispatch();
+  const allContacts = useSelector(getContacts);
   const handleSubmit = (values, { resetForm }) => {
     const { name, number } = values;
     const contactData = { name, number };
+    if (allContacts.some(item => item.name === name)) {
+      return alert('You have the same contact already  ');
+    }
+    dispatch(addContact(contactData));
+
     resetForm();
-    return createContact(contactData);
   };
 
   return (
@@ -72,7 +81,7 @@ const ContactsForm = ({ createContact }) => {
   );
 };
 
-ContactsForm.propTypes = {
-  createContact: PropTypes.func.isRequired,
-};
+// ContactsForm.propTypes = {
+//   // createContact: PropTypes.func.isRequired,
+// };
 export default ContactsForm;
